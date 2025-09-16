@@ -1,5 +1,6 @@
+import pandas as pd
+
 def import_csv(file_path:str):
-    import pandas as pd
 
     col2drop = ["Station", "Station (R)", "Station (H)", "Station (oH)", "Rechtswert", 
             "Hochwert", "orth. Höhe", "Längengrad ", "Breitengrad", "ell. Höhe", "Code",
@@ -55,7 +56,6 @@ def import_csv(file_path:str):
     
 
 def import_fix(file_path:str):
-    import pandas as pd
 
     try:
         df = pd.read_csv(file_path, delimiter=";", encoding="mbcs")

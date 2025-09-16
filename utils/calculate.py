@@ -28,3 +28,58 @@ def korr_kippachse(dist_ab,offset_b, v_angle_korr):
 
 def cool (x):
     return f"de boppi und de michi sind {x}"
+
+
+## Berechnung Azimut aus Näherungskoordinaten
+def azi_aprox(df_start, df_end):
+    """
+    Berechnet das Näherungsazimut zwischen zwei Punkten auf Grundlage ihrer
+    Ost- und Nordkoordinaten.
+
+    Die Funktion liest die Koordinaten aus zwei DataFrames (`df_start` und 
+    `df_end`), ermittelt die Richtungsdifferenzen in Ost- und Nordrichtung 
+    und gibt das Azimut in Gon (Neugrad) zurück. Dabei werden Sonderfälle 
+    für reine Nord-, Süd-, Ost- oder Westrichtungen berücksichtigt.
+
+    Parameter
+    ----------
+    df_start : pandas.DataFrame
+        DataFrame mit den Startkoordinaten. Muss die Spalten "E-Koord" und 
+        "N-Koord" enthalten.
+    df_end : pandas.DataFrame
+        DataFrame mit den Endkoordinaten. Muss ebenfalls die Spalten 
+        "E-Koord" und "N-Koord" enthalten.
+
+    Rueckgabewert
+    -------------
+    float
+        Azimut in Gon (Neugrad), gemessen von Norden im Uhrzeigersinn.
+    """
+
+    ## Auswahl der Koordinaten aus dem DF
+    E1 = df_start["E-Koord"].values[0]
+    N1 = df_start['N-Koord'].values[0]
+    E2 = df_end['E-Koord'].values[0]
+    N2 = df_end['N-Koord'].values[0]
+
+    ## Berechnung des Azimutes aus den Näherungskoordinaten
+    delta_East = E2 - E1
+    delta_North = N2 - N1
+    if delta_East == 0 and delta_North > 0:
+        azimuth = 0.0
+    elif delta_East == 0 and delta_North < 0:
+        azimuth = 200.0
+    elif delta_East > 0 and delta_North == 0:
+        azimuth = 100.0
+    elif delta_East < 0 and delta_North == 0:
+        azimuth = 300.0
+    elif delta_East > 0 and delta_North > 0:
+        azimuth = rad2gon(asin(delta_East / delta_North))
+    elif delta_East < 0 and delta_North > 0:
+        azimuth = rad2gon(asin(delta_North / delta_East)) + 300.0
+    elif delta_East < 0 and delta_North < 0:
+        azimuth = rad2gon(asin(delta_North / delta_East)) + 100.0
+    elif delta_East > 0 and delta_North < 0:
+        azimuth = rad2gon(asin(delta_East / delta_North)) + 200.0
+
+    return azimuth

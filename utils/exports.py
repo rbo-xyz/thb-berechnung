@@ -1,48 +1,41 @@
 import tabulate as tl
 from datetime import datetime
+import os
 
 def export_protocol(df300_new, 
                     info:list, 
                     visur:str, 
-                    file_path:str):
+                    file_path:str,
+                    data:list):
     """
-    Exportiert das Protokoll der trigonometrischen Höhenbestimmung als ASCII-Textdatei.
+    Exportiert ein Trigonometrisches Höhenbestimmungsprotokoll in eine formatierte Textdatei.
 
-    Die Funktion erstellt eine formatierte Tabelle mit allen Messwerten, fügt Header-Informationen 
-    (Visur-ID, Auswertungsdatum) und Footer-Informationen (Start-/Endpunkt, Höhendifferenz, 
-    mittlere Schrägdistanz, Refraktionskoeffizient) hinzu und speichert alles in einer Datei.
+    Die Funktion erstellt ein Textprotokoll mit:
+    - Tabellenübersicht der Messergebnisse (mit tabulate formatiert)
+    - Header mit Visur-ID und Auswertungszeit
+    - Footer mit Messparametern, Start- und Endpunkten, Höhendifferenz,
+      mittlerer Schrägdistanz, Refraktionskoeffizient und Präanalyse-Komponenten
 
-    Parameters
-    ----------
+    Parameter:
+    -----------
     df300_new : pandas.DataFrame
-        DataFrame mit den final berechneten Messwerten. Erwartete Spalten:
-        - "ID Messung"
-        - "Schrägdistanz A --> B [m]"
-        - "Schrägdistanz B --> A [m]"
-        - "Mittlere Schrägdistanz [m]"
-        - "Höhendifferenz [m]"
-        - "Refraktionskoeffizient k"
+        DataFrame mit den berechneten Messwerten (Schrägdistanz, Höhendifferenz, Refraktionskoeffizient).
     info : list
-        Liste mit wichtigen Kennwerten der Messung, z.B.:
-        - info[0] : Startpunkt (A)
-        - info[1] : Endpunkt (B)
-        - info[2] : Höhendifferenz aus Näherungskoordinaten
-        - info[3] : Mittlere Höhendifferenz
-        - info[4] : Standardabweichung Höhendifferenz
-        - info[5] : Mittlerer Refraktionskoeffizient k
-        - info[6] : Standardabweichung k
-        - info[7] : Mittlere Schrägdistanz
-        - info[8] : Standardabweichung Schrägdistanz
+        Liste mit Informationen über Start- und Endpunkte, Höhendifferenzen, Refraktionskoeffizienten
+        und Präanalyse-Komponenten. Erwartetes Format:
+        [pktNr_A, pktNr_B, delta_h_aprox, mean_delta_h, std_delta_h, mean_k, std_k, mean_sd, std_sd, genauigkeit_mm, präanalyse_komponenten]
     visur : str
-        ID der Visur (Messung), die im Header der Protokolldatei angezeigt wird.
+        ID der Messung, wird für die Benennung der Ausgabedatei verwendet.
     file_path : str
-        Pfad zur Ausgabedatei, in die das Protokoll geschrieben wird.
+        Pfad zum Ordner, in dem die Protokolldatei gespeichert werden soll.
+    data : list
+        Messparameterliste: [Signalhöhe Station A, Instrumentenoffset A, Signalhöhe Station B, Instrumentenoffset B]
 
-    Returns
-    -------
+    Rückgabe:
+    ----------
     None
-        Die Funktion speichert die formatierte Tabelle direkt in der angegebenen Datei.
-        Im Fehlerfall wird eine Meldung auf der Konsole ausgegeben.
+        Die Funktion schreibt das Protokoll als Textdatei in den angegebenen Ordner.
+        Bei Fehlern wird eine Fehlermeldung ausgegeben.
     """
 
     try:
@@ -57,6 +50,12 @@ def export_protocol(df300_new,
                   "<<---------------------------------------------------------------->>\n"]
 
         footer = ["\n<<---------------------------------------------------------------->>",
+                  "Angegebene Patrameter der Messung:",
+                  f" - Signalhöhe Station A: {data[0]} m",
+                  f" - Instrumentenoffset Station A: {data[1]} m",
+                  f" - Signalhöhe Station B: {data[2]} m",
+                  f" - Instrumentenoffset Station B: {data[3]} m",
+                  "<<---------------------------------------------------------------->>",
                   f"Startpunkt (A): {info[0]} // Endpunkt (B): {info[1]}",
                   f"Höhendifferenz berechnet aus Näherungskoordinaten: {info[2]} m",
                   f"Mittlere Schrägdistanz inkl. 1σ: {info[7]:.4f} m ± {info[8]:.4f} m",
@@ -74,8 +73,59 @@ def export_protocol(df300_new,
 
         full_text = "\n".join(header) + "\n"  + tbl_str + "\n" + "\n".join(footer)
 
-        with open(file_path, "w", encoding="utf-8") as f:
+        full_path = os.path.join(file_path, visur + "_Protokoll.txt")
+
+        with open(full_path, "w", encoding="utf-8") as f:
             f.write(full_text)
 
     except Exception as e:
         print(f"Fehler beim Exportieren der Protokolldatei: {e}")
+
+
+def export2csv(df300_new, 
+               info:list, 
+               visur:str, 
+               file_path:str,
+               data:list):
+    """
+    Exportiert ein DataFrame zusammen mit einem einleitenden Header-Text als CSV-Datei.
+
+    Parameters
+    ----------
+    df300_new : pandas.DataFrame
+        Das zu exportierende DataFrame mit den Messergebnissen.
+    info : list
+        Liste mit zusätzlichen Informationen zur Auswertung (z. B. Start-/Endpunkt, Mittelwerte, Standardabweichungen).
+    visur : str
+        Identifikationsstring der Visur, wird auch für die Dateibenennung verwendet.
+    file_path : str
+        Pfad zum Verzeichnis, in dem die CSV-Datei gespeichert werden soll.
+    data : list
+        Liste mit Messparametern (z. B. Signal- und Instrumentenhöhen), die im Header berücksichtigt werden können.
+
+    Returns
+    -------
+    None
+        Die Funktion speichert die CSV-Datei auf der Festplatte. Es wird kein Wert zurückgegeben.
+
+    Notes
+    -----
+    - Die CSV-Datei enthält in der ersten Zeile einen Header-Text mit Visur-ID und aktuellem Datum/Zeit.
+    - Das DataFrame wird danach angehängt, ohne Indexspalte, mit Semikolon als Trennzeichen.
+    - Bestehende Dateien mit gleichem Namen werden überschrieben.
+    """
+
+    try:
+        current_time = datetime.now().strftime("%d.%m.%Y / %H:%M")
+        header = f"Trigonometrische Höhenbestimmung Madrisa - VisurID: {visur}, Ausgewertet am {current_time}"
+
+        full_path = os.path.join(file_path, visur + "_Auswertung.csv")
+
+        with open(full_path, "w", encoding="utf-8") as f:
+            f.write(header)
+            f.write("\n")
+
+        df300_new.to_csv(full_path, mode="a", index=False, sep=";")
+
+    except Exception as e:
+        print(f"Fehler beim Exportieren der CSV-Datei: {e}")

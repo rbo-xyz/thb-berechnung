@@ -60,56 +60,52 @@ def master_thb(df100,
                offset_A:float, 
                offset_B:float):
     """
-    Führt die komplette Trigonometrische Höhenbestimmung (THB) aus und gibt ein zusammengeführtes Ergebnis-DataFrame
-    sowie wichtige Kennwerte der Messung zurück.
+    Führt die vollständige Auswertung der trigonometrischen Höhenbestimmung zwischen zwei Punkten durch.
 
-    Die Funktion:
-    - Filtert Start- und Endpunkte aus den Messdaten
-    - Berechnet vorläufige Azimute
-    - Korrigiert V-Winkel bei zweilagigen Messungen
-    - Berücksichtigt Lotabweichungen und Kippachsenkorrekturen
-    - Berechnet mittlere Schrägdistanz, Höhendifferenz und Refraktionskoeffizient
-    - Bereitet das Ergebnis-DataFrame für die Ausgabe auf
+    Die Funktion verarbeitet zwei Messdatensätze (df100 und df200) sowie Näherungskoordinaten (df_aprox),
+    korrigiert Lotabweichungen und Kippachse, berechnet mittlere Schrägdistanz, Höhendifferenz
+    und Refraktionskoeffizient und erstellt ein zusammengeführtes DataFrame mit den Ergebnissen.
 
-    Parameters
+    Schritte:
     ----------
+    1. Filtern der Start- und Endpunkte aus den Messdaten.
+    2. Bestimmung der Azimute für beide Messungen.
+    3. Anpassung der V-Winkel für 2-lagige Messungen.
+    4. Korrektur der Lotabweichungen anhand der Näherungskoordinaten.
+    5. Korrektur der Kippachse mit Prismamount-Offsets.
+    6. Berechnung der mittleren Schrägdistanz.
+    7. Berechnung der Höhendifferenz zwischen den Punkten.
+    8. Berechnung der Refraktionskoeffizienten.
+    9. Rundung und Aufbereitung des DataFrames für die Ausgabe.
+    10. Berechnung von Präanalysekomponenten für Genauigkeitsschätzung.
+
+    Parameter:
+    -----------
     df100 : pandas.DataFrame
-        Messdaten der ersten Messung.
+        DataFrame der ersten Messreihe (mit Spalten wie 'Standpkt', 'Zielpkt', 'V-Winkel', 'Ds', 'Lage').
     df200 : pandas.DataFrame
-        Messdaten der zweiten Messung.
+        DataFrame der zweiten Messreihe.
     df_aprox : pandas.DataFrame
-        Näherungskoordinaten zur Bestimmung von Azimut und Lotabweichungen.
+        DataFrame mit Näherungskoordinaten der Messpunkte (Spalten 'PktNr', 'Xi', 'Eta', 'Hoehe').
     signal_A : float
-        Höhe des Prismas am Punkt A.
+        Signalhöhe an Station A [m].
     signal_B : float
-        Höhe des Prismas am Punkt B.
+        Signalhöhe an Station B [m].
     offset_A : float
-        Instrumenten-Offset am Punkt A.
+        Instrumentenoffset an Station A [m].
     offset_B : float
-        Instrumenten-Offset am Punkt B.
+        Instrumentenoffset an Station B [m].
 
-    Returns
-    -------
+    Rückgabe:
+    ----------
     df300 : pandas.DataFrame
-        Zusammengeführtes Ergebnis-DataFrame mit den Spalten:
-        - "ID Messung"  
-        - "Schrägdistanz A --> B [m]"  
-        - "Schrägdistanz B --> A [m]"  
-        - "Mittlere Schrägdistanz [m]"  
-        - "Höhendifferenz [m]"  
-        - "Refraktionskoeffizient k"  
-
-    infos : list of float/str
-        Wichtige Kennwerte der Messung:
-        - infos[0] : Startpunkt Nr. A
-        - infos[1] : Endpunkt Nr. B
-        - infos[2] : Höhendifferenz aus Näherungskoordinaten
-        - infos[3] : Mittlere Höhendifferenz über Messung
-        - infos[4] : Standardabweichung der Höhendifferenz
-        - infos[5] : Mittlerer Refraktionskoeffizient k
-        - infos[6] : Standardabweichung von k
-        - infos[7] : Mittlere Schrägdistanz
-        - infos[8] : Standardabweichung der Schrägdistanz
+        Zusammengeführtes und bereinigtes DataFrame mit den Spalten:
+        ['ID Messung', 'Schrägdistanz A -- > B [m]', 'Schrägdistanz B -- > A [m]',
+         'Mittlere Schrägdistanz [m]', 'Höhendifferenz [m]', 'Refraktionskoeffizient k'].
+    infos : list
+        Liste mit zusammengefassten Informationen der Auswertung:
+        [Startpunkt, Endpunkt, delta_h_aprox, mean_delta_h, std_delta_h,
+         mean_k, std_k, mean_sd, std_sd, Genauigkeit Präanalyse [mm], Präanalyse-Komponenten [d_komp, z_komp, k_komp, i_komp, s_komp]]
     """
 
     ### Filtern der Messdaten

@@ -208,6 +208,19 @@ def master_thb(df100,
 
     ### Vorbereiten des df für die Ausgabe
     ## <----------------------------------------------------------------------------------->
+
+    # Werte für Präanalyse / vor Spaltenlöschung
+    dist_h_m = df300["Ds-A2B"].values[0] * np.sin(df300["V-Winkel-A2B"].values[0] * rho())
+    dist_s_mm = df300["Ds-A2B"].values[0] * 1000
+
+    d_komp = np.cos(df300["V-Winkel-A2B"].values[0] * rho()) * (0.6 + (dist_s_mm/1000000))
+    z_komp = (np.sin(df300["V-Winkel-A2B"].values[0] * rho()) * dist_s_mm) * (0.15/1000)/200*np.pi
+    ## k-komponente kann bei gleichzeitig gegenseiteger Messung vernachlässigt werden
+    k_komp = (-1 * ( (dist_h_m)**2 / (2 * 6_370_000) ) * 0.06 ) * 1000
+    i_komp = 1
+    s_komp = 1
+
+
     col2drop = ["V-Winkel-A2B", "V-Winkel-B2A"]
     df300 = df300.drop(col2drop, axis=1, errors="ignore")
     df300 = df300.round({"Ds-A2B":4, "Ds-B2A":4, "Ds-Mittel":4, "delta_H":4, "k":2})
@@ -232,8 +245,12 @@ def master_thb(df100,
     meand_sd = round(df300["Mittlere Schrägdistanz [m]"].mean(), 5)
     std_sd = round(df300["Mittlere Schrägdistanz [m]"].std(), 5)
 
+    praeanalyse = round(np.sqrt(d_komp**2 + z_komp**2 + i_komp**2 + s_komp**2) / np.sqrt(2), 2)
+    praeanalyse_komp = [d_komp, z_komp, k_komp, i_komp, s_komp]
+
     infos = [pktNr_A, pktNr_B, float(delta_h_aprox), float(mean_delta_h), float(std_delta_h), 
-             float(mean_k), float(std_k), float(meand_sd), float(std_sd)]
+             float(mean_k), float(std_k), float(meand_sd), float(std_sd), 
+             float(praeanalyse), praeanalyse_komp]
 
     ## <----------------------------------------------------------------------------------->
 

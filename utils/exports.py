@@ -61,7 +61,16 @@ def export_protocol(df300_new,
                   f"Höhendifferenz berechnet aus Näherungskoordinaten: {info[2]} m",
                   f"Mittlere Schrägdistanz inkl. 1σ: {info[7]:.4f} m ± {info[8]:.4f} m",
                   f"Mittlere Höhendifferenz über Trig. Höhenbestimmung inkl. 1σ: {info[3]} m ± {info[4]} m",
-                  f"Mittlerer Refraktionskoeffizient k inkl. 1σ: {info[5]:.2f} ± {info[6]:.2f}",]
+                  f"Mittlerer Refraktionskoeffizient k inkl. 1σ: {info[5]:.2f} ± {info[6]:.2f}",
+                  "<<---------------------------------------------------------------->>",
+                  f"Die Präanalyse ergibt eine Genauigkeit der Höhenbestimmung von ca. {info[9]:.2f} mm // {info[9]/1000:.4f} m ",
+                  "Die Komponenten der Präanalyse sind (in mm):",
+                  f" - Distanzkomponente: {info[10][0]:.2f} mm",
+                  f" - Zenitwinkelkomponente: {info[10][1]:.2f} mm",
+                  f" - Refraktionskomponente: {info[10][2]:.2f} mm (wird bei gegenseitig gleichzeitiger Messung vernachlässigt)",
+                  f" - Genauigkeit Instrumentenhöhe: {info[10][3]:.2f} mm",
+                  f" - Genauigkeit Signalhöhe: {info[10][4]:.2f} mm",]
+
 
         full_text = "\n".join(header) + "\n"  + tbl_str + "\n" + "\n".join(footer)
 

@@ -1,7 +1,6 @@
-Trigonometrische Höhenbestimmung - Protokoll der Asuwertung
-Visur ID: 1003-1009, Ausgewertet am 17.09.2025 / 16:01
+Trigonometrische Höhenbestimmung - Protokoll der Auswertung
+Visur ID: 1003-1009, Ausgewertet am 17.09.2025 / 17:26
 <<---------------------------------------------------------------->>
-
 
 +----+--------------+------------------------------+------------------------------+------------------------------+----------------------+----------------------------+
 |    |  ID Messung  |  Schrägdistanz A -- > B [m]  |  Schrägdistanz B -- > A [m]  |  Mittlere Schrägdistanz [m]  |  Höhendifferenz [m]  |  Refraktionskoeffizient k  |
@@ -26,10 +25,17 @@ Visur ID: 1003-1009, Ausgewertet am 17.09.2025 / 16:01
 | 17 |    3-2.3     |          2494.3326           |          2494.3334           |          2494.3330           |       187.3416       |            0.04            |
 +----+--------------+------------------------------+------------------------------+------------------------------+----------------------+----------------------------+
 
-
 <<---------------------------------------------------------------->>
 Startpunkt (A): 1009 // Endpunkt (B): 1003
 Höhendifferenz berechnet aus Näherungskoordinaten: 187.47 m
 Mittlere Schrägdistanz inkl. 1σ: 2494.3336 m ± 0.0009 m
 Mittlere Höhendifferenz über Trig. Höhenbestimmung inkl. 1σ: 187.34298 m ± 0.01765 m
 Mittlerer Refraktionskoeffizient k inkl. 1σ: 0.02 ± 0.05
+<<---------------------------------------------------------------->>
+Die Präanalyse ergibt eine Genauigkeit der Höhenbestimmung von ca. 4.27 mm // 0.0043 m 
+Die Komponenten der Präanalyse sind (in mm):
+ - Distanzkomponente: 0.23 mm
+ - Zenitwinkelkomponente: 5.86 mm
+ - Refraktionskomponente: -29.14 mm (wird bei gegenseitig gleichzeitiger Messung vernachlässigt)
+ - Genauigkeit Instrumentenhöhe: 1.00 mm
+ - Genauigkeit Signalhöhe: 1.00 mm

@@ -39,6 +39,14 @@ def delta_h(mittel_dist, v_angle_korr_korr_ab, v_angle_korr_korr_ba, instr_heigh
 
     return delta_h
 
+
+def refraktion(mittel_dist, delta_h, v_angle_korr_korr_ab, v_angle_korr_korr_ba):
+    v_angle_korr_korr_ab = gon2rad(v_angle_korr_korr_ab) # gon to rad
+    v_angle_korr_korr_ba = gon2rad(v_angle_korr_korr_ba) # gon to rad
+    k = 1-((v_angle_korr_korr_ab+v_angle_korr_korr_ba-pi)*6370000/(mittel_dist*sin(v_angle_korr_korr_ab))) # Berechnung des Refraktionskoeffizienten
+
+    return k
+
 def cool (x):
     return f"de boppi und de michi sind {x}"
 

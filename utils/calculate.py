@@ -30,6 +30,15 @@ def korr_kippachse(dist_ab,offset_b, v_angle_korr):
 
     return dist_korr, v_angle_korr_korr
 
+
+
+def delta_h(mittel_dist, v_angle_korr_korr_ab, v_angle_korr_korr_ba, instr_height_a, instr_height_b, signal_height_a, signal_height_b):
+    v_angle_korr_korr_ab = gon2rad(v_angle_korr_korr_ab) # gon to rad
+    v_angle_korr_korr_ba = gon2rad(v_angle_korr_korr_ba) # gon to rad
+    delta_h = 0.5* (mittel_dist *(sin((pi/2)-v_angle_korr_korr_ab))-cos(pi-v_angle_korr_korr_ba)+(instr_height_a-instr_height_b)+(signal_height_a-signal_height_b)) # Berechnung der Höhendifferenz
+
+    return delta_h
+
 def cool (x):
     return f"de boppi und de michi sind {x}"
 

@@ -1,1 +1,1 @@
-# thb-berechnung
+# Trigonometrische Höhenbestimmung

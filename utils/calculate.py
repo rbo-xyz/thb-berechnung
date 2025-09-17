@@ -10,6 +10,10 @@ def rad2gon(rad):
 def korr_lotabw(xi, eta, azi, v_angle):
     v_angle = gon2rad(azi) # gon to rad
     azi = gon2rad(azi) # gon to rad
+    # xi und eta umrechnen von cc (1cc = 0.1mgon) in rad
+    xi = (xi / 10000) /200 * pi
+    eta = (eta / 10000) /200 * pi
+
     theta_v = xi * cos(azi) + eta * sin(azi) # Berechnung der Lotabweichung in laengsrichtung aus xi und eta
     v_angle_korr = v_angle + theta_v # Korrektur des Azimuts um Theta laengs
     v_angle_korr = rad2gon(v_angle_korr) # rad to gon

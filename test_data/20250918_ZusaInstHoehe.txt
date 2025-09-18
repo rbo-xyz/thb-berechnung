@@ -1,0 +1,78 @@
+## Die Offset der einzelnen Messgruppe (iykyk)
+# Bären: 0.2844
+# Schneehasen: 0.2844
+# Steinbock: 0.2682
+
+### Hier sind die Parameter der jeweiligen Messung einzutragen ###
+#<-------------------------------------------->
+# Index 0 (Visur 1003-1009)
+# signalhoehe_A = 1.6804
+# offset_A = 0.2682
+# signalhoehe_B = 1.8494
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 1 (Visur 1003-1013)
+# signalhoehe_A = 1.6804
+# offset_A = 0.2682
+# signalhoehe_B = 2.0122
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 2 (Visur 1009-1010)
+# signalhoehe_A = 1.8458
+# offset_A = 0.2844
+# signalhoehe_B = 1.835
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 3 (Visur 1009-1011)
+# signalhoehe_A = 1.8458
+# offset_A = 0.2844
+# signalhoehe_B = 1.7844
+# offset_B = 0.2682
+#<-------------------------------------------->
+# Index 4 (Visur 1009-1014)
+# signalhoehe_A = 1.8494
+# offset_A = 0.2844
+# signalhoehe_B = 1.5422
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 5 (Visur 1010-1011)
+# signalhoehe_A = 1.835
+# offset_A = 0.2844
+# signalhoehe_B = 1.7834
+# offset_B = 0.2682
+#<-------------------------------------------->
+# Index 6 (Visur 1010-1012)
+# signalhoehe_A = 1.835
+# offset_A = 0.2844
+# signalhoehe_B = 1.6171
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 7 (Visur 1010-1015)
+# signalhoehe_A = 1.7479
+# offset_A = 0.2844
+# signalhoehe_B = 1.9602
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 8 (Visur 1011-1012)
+# signalhoehe_A = 1.7834
+# offset_A = 0.2682
+# signalhoehe_B = 1.6171
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 9 (Visur 1011-1014)
+# signalhoehe_A = 1.7834
+# offset_A = 0.2682
+# signalhoehe_B = 1.8616
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 10 (Visur 1013-11773210)
+# signalhoehe_A = 2.0122
+# offset_A = 0.2844
+# signalhoehe_B = 1.9384
+# offset_B = 0.2844
+#<-------------------------------------------->
+# Index 11 (Visur 1015-11773210)
+# signalhoehe_A = 2.0122
+# offset_A = 0.2844
+# signalhoehe_B = 1.9602
+# offset_B = 0.2844

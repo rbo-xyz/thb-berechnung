@@ -50,7 +50,7 @@ def export_protocol(df300_new,
                   "<<---------------------------------------------------------------->>\n"]
 
         footer = ["\n<<---------------------------------------------------------------->>",
-                  "Angegebene Patrameter der Messung:",
+                  "Angegebene Parameter der Messung:",
                   f" - Signalhöhe Station A: {data[0]} m",
                   f" - Instrumentenoffset Station A: {data[1]} m",
                   f" - Signalhöhe Station B: {data[2]} m",

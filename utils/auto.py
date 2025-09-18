@@ -1,0 +1,97 @@
+from utils.imports import import_csv, import_fix
+from utils.calculate import master_thb
+from utils.exports import export_protocol
+
+from pathlib import Path
+import pandas as pd
+
+def auto_auswertung2025(index:int,
+                        base_path,
+                        InstrHoehe:str,
+                        fix:str
+                        ):
+
+    ## <----------------------------------------------------------------------------------->
+    ## Erstellung der Pfadliste zu den unterschiedlichen Daten (Props an ChatGPT)
+    # Basis-Pfad als Path-Objekt
+    csv_first = []
+    csv_second = []
+    parent_folders = []
+    folder_paths = []
+
+    # Iteriere über alle Unterordner
+    for folder in sorted([f for f in base_path.iterdir() if f.is_dir()]):
+        csv_files = sorted([f for f in folder.glob("*.csv")])
+
+        if len(csv_files) >= 2:
+            csv_first.append(str(csv_files[0]))
+            csv_second.append(str(csv_files[1]))
+            parent_folders.append(folder.name)       # Ordnername
+            folder_paths.append(str(folder))         # Pfad des Ordners
+        else:
+            print(f"Warnung: Weniger als 2 CSV-Dateien in {folder.name}")
+
+    ## <----------------------------------------------------------------------------------->
+    ## Setze die Liste zum aktuellen index
+    mess1_A2B = csv_first[index]
+    mess2_B2A = csv_second[index]
+
+    path_protokoll = folder_paths[index]
+    visurnummer = parent_folders[index]
+    ## <----------------------------------------------------------------------------------->
+
+    # ## Prüfung der Visurnummer und Ausgabe
+    # max_index = len(csv_first)-1
+    # print(f"Es wurden {max_index+1} Visuren gefunden. // Der Range der Indizies sind 0 bis {max_index}.")
+    # print(f"Verarbeite Visur: {visurnummer}")
+
+    ## <----------------------------------------------------------------------------------->
+    ## Import der Instrumentenparameter und als Parameter setzen
+    df001 = pd.read_csv(InstrHoehe, delimiter=";", encoding="mbcs")
+
+    df001_new = df001[df001["Nr"] == index]
+
+    signalhoehe_A = df001_new["signal_A"].values[0]
+    offset_A = df001_new["offset_A"].values[0]
+    signalhoehe_B = df001_new["signal_B"].values[0]
+    offset_B = df001_new["offset_B"].values[0]
+
+    data = [signalhoehe_A, offset_A, signalhoehe_B, offset_B]
+    ## <----------------------------------------------------------------------------------->
+
+    # string_ausgabe = f"""
+    # Signalhöhe A: {signalhoehe_A} m
+    # Offset A: {offset_A} m
+    # Signalhöhe B: {signalhoehe_B} m
+    # Offset B: {offset_B} m
+    # """
+
+    # print(string_ausgabe)
+
+    ## <----------------------------------------------------------------------------------->
+    ## Berechnungen
+    ## Import der ersten csv-Datei mit den Messdaten
+    df100 = import_csv(mess1_A2B)
+
+    ## Import der zweiten csv-Datei mit den Messdaten
+    df200 = import_csv(mess2_B2A)
+
+    ## Import der Näherungskoordinaten
+    df_aprox = import_fix(fix)
+
+    ## Höhenberechnung
+    df300_new, infos = master_thb(df100, 
+                                  df200, 
+                                  df_aprox, 
+                                  signalhoehe_A, 
+                                  signalhoehe_B, 
+                                  offset_A, offset_B)
+    
+    ## <----------------------------------------------------------------------------------->
+
+    # ## Test des dfs
+    # print(df300_new)
+
+    ## Export der Protokolldatei
+    export_protocol(df300_new, infos, visurnummer, path_protokoll, data)
+    ## <----------------------------------------------------------------------------------->

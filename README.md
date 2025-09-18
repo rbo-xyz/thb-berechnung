@@ -37,4 +37,4 @@ Die Applikation kann man auf zwei Arten benutzen.
 
 Um nur das Prinzip einer THB verstehen zu können, wird emphohlen, das Jupyter-Notebook **TrigHoehenbestimmung_TESTDATA.ipynb** zu öffnen un bearbeiten. Dieses Arbeitet nur mit relativen Testdaten
 
-Die Datei **TrigHoehenbestimmung_Auto.ipynb** ist konzipiert, um eine Halbautomatische Auswertung zu bewerkstelligen. Diese funktioniert nur auf dem Master-Desktop
+Die Datei **TrigHoehenbestimmung_Auto.ipynb** ist konzipiert, um eine automatische Auswertung zu bewerkstelligen. Diese funktioniert nur auf dem Master-Desktop

@@ -28,7 +28,7 @@ git clone https://github.com/rbo-xyz/thb-berechnung
 # Erstelle ein neues Conda Environment und füge die Python Packges hinzu
 conda create -n thb-auswertung python=3.10 -c conda-forge -y
 
-conda install jupyterlab numpy Pandas tabulate -c conda-forge -y
+conda install jupyterlab numpy Pandas tabulate weasyprint markdown -c conda-forge -y
 ```
 
 ## Funktionsweise

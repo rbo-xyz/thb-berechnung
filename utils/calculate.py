@@ -60,33 +60,34 @@ def master_thb(df100,
                offset_A:float, 
                offset_B:float):
     """
-    Führt die vollständige Auswertung der trigonometrischen Höhenbestimmung zwischen zwei Punkten durch.
+    Führt die vollständige trigonometrische Höhenbestimmung zwischen zwei Punkten durch.
 
-    Die Funktion verarbeitet zwei Messdatensätze (df100 und df200) sowie Näherungskoordinaten (df_aprox),
+    Die Funktion verarbeitet zwei Messdatensätze (df100, df200) sowie Näherungskoordinaten (df_aprox),
     korrigiert Lotabweichungen und Kippachse, berechnet mittlere Schrägdistanz, Höhendifferenz
-    und Refraktionskoeffizient und erstellt ein zusammengeführtes DataFrame mit den Ergebnissen.
+    und Refraktionskoeffizient und erstellt ein bereinigtes DataFrame mit den Ergebnissen.
+    Zusätzlich werden Präanalysekomponenten für eine Genauigkeitsschätzung ermittelt.
 
-    Schritte:
-    ----------
-    1. Filtern der Start- und Endpunkte aus den Messdaten.
-    2. Bestimmung der Azimute für beide Messungen.
+    Verarbeitungsschritte:
+    ---------------------
+    1. Filtern von Start- und Endpunkten aus den Messdaten.
+    2. Berechnung der Azimute für beide Messungen.
     3. Anpassung der V-Winkel für 2-lagige Messungen.
     4. Korrektur der Lotabweichungen anhand der Näherungskoordinaten.
     5. Korrektur der Kippachse mit Prismamount-Offsets.
     6. Berechnung der mittleren Schrägdistanz.
     7. Berechnung der Höhendifferenz zwischen den Punkten.
     8. Berechnung der Refraktionskoeffizienten.
-    9. Rundung und Aufbereitung des DataFrames für die Ausgabe.
-    10. Berechnung von Präanalysekomponenten für Genauigkeitsschätzung.
+    9. Rundung, Spaltenbereinigung und Umbenennung für die Ausgabe.
+    10. Berechnung von Präanalysekomponenten zur Genauigkeitsschätzung.
 
     Parameter:
-    -----------
+    ----------
     df100 : pandas.DataFrame
-        DataFrame der ersten Messreihe (mit Spalten wie 'Standpkt', 'Zielpkt', 'V-Winkel', 'Ds', 'Lage').
+        Messdatensatz der ersten Messreihe (Spalten u.a. 'Standpkt', 'Zielpkt', 'V-Winkel', 'Ds', 'Lage').
     df200 : pandas.DataFrame
-        DataFrame der zweiten Messreihe.
+        Messdatensatz der zweiten Messreihe.
     df_aprox : pandas.DataFrame
-        DataFrame mit Näherungskoordinaten der Messpunkte (Spalten 'PktNr', 'Xi', 'Eta', 'Hoehe').
+        Näherungskoordinaten der Messpunkte (Spalten 'PktNr', 'Xi', 'Eta', 'Hoehe').
     signal_A : float
         Signalhöhe an Station A [m].
     signal_B : float
@@ -97,16 +98,25 @@ def master_thb(df100,
         Instrumentenoffset an Station B [m].
 
     Rückgabe:
-    ----------
+    ---------
     df300 : pandas.DataFrame
-        Zusammengeführtes und bereinigtes DataFrame mit den Spalten:
-        ['ID Messung', 'Schrägdistanz A -- > B [m]', 'Schrägdistanz B -- > A [m]',
-         'Mittlere Schrägdistanz [m]', 'Höhendifferenz [m]', 'Refraktionskoeffizient k'].
-    infos : list
-        Liste mit zusammengefassten Informationen der Auswertung:
-        [Startpunkt, Endpunkt, delta_h_aprox, mean_delta_h, std_delta_h,
-         mean_k, std_k, mean_sd, std_sd, Genauigkeit Präanalyse [mm], Präanalyse-Komponenten [d_komp, z_komp, k_komp, i_komp, s_komp]]
+        Bereinigtes DataFrame mit den Spalten:
+        ['ID Visur', 'ID Messung', 'Lage', "d' (schräg) A-->B [m]", "d' (schräg) B-->A [m]",
+         "d' (mittel, schräg) [m]", 'V-Winkel A-->B [gon]', 'V-Winkel B-->A [gon]',
+         'Höhendiff. [m]', 'Refraktionskoeff. k'].
+    infos_vis : list
+        [Startpunkt, Endpunkt, Genauigkeit Präanalyse, Präanalyse-Komponenten [d_komp, z_komp, k_komp, i_komp, s_komp]]
+    infos_height : list
+        Statistische Kennwerte der Höhendifferenz: [delta_h_aprox, mean_delta_h, std_delta_h,
+        mean_delta_h_lage1, std_delta_h_lage1, mean_delta_h_lage2, std_delta_h_lage2].
+    infos_k : list
+        Statistische Kennwerte der Refraktionskoeffizienten: [mean_k, std_k,
+        mean_k_lage1, std_k_lage1, mean_k_lage2, std_k_lage2].
+    infos_sd : list
+        Statistische Kennwerte der mittleren Schrägdistanz: [mean_sd, std_sd,
+        mean_sd_lage1, std_sd_lage1, mean_sd_lage2, std_sd_lage2].
     """
+
 
     ### Filtern der Messdaten
     ## <-----------------------------------------------------------------------------------> 
@@ -130,8 +140,8 @@ def master_thb(df100,
 
     ### Korrektur der 2-lagigen Messung (V-Winkel Anpassen)
     ## <-----------------------------------------------------------------------------------> 
-    df100.loc[df100["Lage"] == 2, "V-Winkel"] = 400 - df100["V-Winkel"]
-    df200.loc[df200["Lage"] == 2, "V-Winkel"] = 400 - df200["V-Winkel"]
+    df100.loc[df100["Lage"] == "2", "V-Winkel"] = 400 - df100["V-Winkel"]
+    df200.loc[df200["Lage"] == "2", "V-Winkel"] = 400 - df200["V-Winkel"]
     ## <-----------------------------------------------------------------------------------> 
 
 
@@ -154,7 +164,7 @@ def master_thb(df100,
     df100["Ds_Korrigiert"] , df100["V-Winkel_Korrigiert"] = korr_kippachse(df100["Ds"].values, offset_A, df100["V-Winkel_korr"].values)
     df200["Ds_Korrigiert"] , df200["V-Winkel_Korrigiert"] = korr_kippachse(df200["Ds"].values, offset_B, df200["V-Winkel_korr"].values)
 
-    col2drop = ["Datum", "Lage", "Uhrzeit", "Standpkt", "Zielpkt", 
+    col2drop = ["Datum", "Uhrzeit", "Standpkt", "Zielpkt", 
                 "V-Winkel", "V-Winkel_korr", "Ds", "Hz-Winkel"]
 
     df100 = df100.drop(col2drop, axis=1, errors="ignore")
@@ -165,16 +175,22 @@ def master_thb(df100,
     ### Vorbereiten des dfs für die Berechnung der Höhendifferenz
     ## <----------------------------------------------------------------------------------->
     df100 = df100.rename(columns={"Ds_Korrigiert" : "Ds-A2B",
-                                  "V-Winkel_Korrigiert" : "V-Winkel-A2B"})
+                                  "V-Winkel_Korrigiert" : "V-Winkel-A2B",
+                                  "Lage" : "Lage-A2B"})
     
     df200 = df200.rename(columns={"Ds_Korrigiert" : "Ds-B2A",
-                                  "V-Winkel_Korrigiert" : "V-Winkel-B2A"})
-    
+                                  "V-Winkel_Korrigiert" : "V-Winkel-B2A",
+                                  "Lage" : "Lage-B2A"})
+
     df300 = pd.merge(df100, df200, on="ID", how="outer")
 
     df300["Ds-Mittel"] = 0.5 * (df300["Ds-A2B"] + df300["Ds-B2A"])
 
-    df300 = df300.loc[:, ["ID", "Ds-A2B", "Ds-B2A", "Ds-Mittel", "V-Winkel-A2B", "V-Winkel-B2A"]]
+    df300["Lage"] = np.where(df300["Lage-A2B"] == df300["Lage-B2A"],
+                             df300["Lage-A2B"],
+                             "FEHLER")
+
+    df300 = df300.loc[:, ["ID", "Lage", "Ds-A2B", "Ds-B2A", "Ds-Mittel", "V-Winkel-A2B", "V-Winkel-B2A"]]
     ## <----------------------------------------------------------------------------------->
 
 
@@ -217,40 +233,121 @@ def master_thb(df100,
     s_komp = 1
 
 
-    col2drop = ["V-Winkel-A2B", "V-Winkel-B2A"]
+    # col2drop = ["V-Winkel-A2B", "V-Winkel-B2A"]
     df300 = df300.drop(col2drop, axis=1, errors="ignore")
-    df300 = df300.round({"Ds-A2B":4, "Ds-B2A":4, "Ds-Mittel":4, "delta_H":4, "k":2})
+    df300 = df300.round({"Ds-A2B":4, 
+                         "Ds-B2A":4, 
+                         "Ds-Mittel":4, 
+                         "V-Winkel-A2B":5, 
+                         "V-Winkel-B2A":5, 
+                         "delta_H":4, 
+                         "k":2})
 
     df300 = df300.rename(columns={"ID" : "ID Messung",
-                                  "Ds-A2B" : "Schrägdistanz A -- > B [m]",
-                                  "Ds-B2A" : "Schrägdistanz B -- > A [m]",
-                                  "Ds-Mittel" : "Mittlere Schrägdistanz [m]",
-                                  "delta_H" : "Höhendifferenz [m]",
-                                  "k" : "Refraktionskoeffizient k"})
+                                  "Ds-A2B" : "d' (schräg) A-->B [m]",
+                                  "Ds-B2A" : "d' (schräg) B-->A [m]",
+                                  "Ds-Mittel" : "d' (mittel, schräg) [m]",
+                                  "V-Winkel-A2B" : "V-Winkel A-->B [gon]",
+                                  "V-Winkel-B2A" : "V-Winkel B-->A [gon]",
+                                  "delta_H" : "Höhendiff. [m]",
+                                  "k" : "Refraktionskoeff. k"})
 
+    df300 = df300.loc[:, ["ID Messung",
+                          "Lage", 
+                          "d' (schräg) A-->B [m]", 
+                          "d' (schräg) B-->A [m]", 
+                          "d' (mittel, schräg) [m]", 
+                          "V-Winkel A-->B [gon]", 
+                          "V-Winkel B-->A [gon]",
+                          "Höhendiff. [m]",
+                          "Refraktionskoeff. k"]]
+
+    ## Statistiken
     pktNr_A = start100
     pktNr_B = end100
     delta_h_aprox = round(np.abs(df100_target["Hoehe"].values[0] - df100_start["Hoehe"].values[0]),2)
 
-    mean_delta_h = round(df300["Höhendifferenz [m]"].mean(), 5)
-    std_delta_h = round(df300["Höhendifferenz [m]"].std(), 5)
+    mean_delta_h = round(df300["Höhendiff. [m]"].mean(), 4)
+    std_delta_h = round(df300["Höhendiff. [m]"].std(), 4)
 
-    mean_k = round(df300["Refraktionskoeffizient k"].mean(), 5)
-    std_k = round(df300["Refraktionskoeffizient k"].std(), 5)
+    df400 = df300[df300["Lage"] == "1"]
+    df500 = df300[df300["Lage"] == "2"]
 
-    meand_sd = round(df300["Mittlere Schrägdistanz [m]"].mean(), 5)
-    std_sd = round(df300["Mittlere Schrägdistanz [m]"].std(), 5)
+    mean_delta_h_lage1 = round(df400["Höhendiff. [m]"].mean(), 4)
+    std_delta_h_lage1 = round(df400["Höhendiff. [m]"].std(), 4)
+
+    mean_delta_h_lage2 = round(df500["Höhendiff. [m]"].mean(), 4)
+    std_delta_h_lage2 = round(df500["Höhendiff. [m]"].std(), 4)
+
+    mean_k = round(df300["Refraktionskoeff. k"].mean(), 2)
+    std_k = round(df300["Refraktionskoeff. k"].std(), 2)
+
+    mean_k_lage1 = round(df400["Refraktionskoeff. k"].mean(), 2)
+    std_k_lage1 = round(df400["Refraktionskoeff. k"].std(), 2)
+
+    mean_k_lage2 = round(df500["Refraktionskoeff. k"].mean(), 2)
+    std_k_lage2 = round(df500["Refraktionskoeff. k"].std(), 2)
+
+    mean_sd = round(df300["d' (mittel, schräg) [m]"].mean(), 4)
+    std_sd = round(df300["d' (mittel, schräg) [m]"].std(), 4)
+
+    mean_sd_lage1 = round(df400["d' (mittel, schräg) [m]"].mean(), 4)
+    std_sd_lage1 = round(df400["d' (mittel, schräg) [m]"].std(), 4)
+
+    mean_sd_lage2 = round(df500["d' (mittel, schräg) [m]"].mean(), 4)
+    std_sd_lage2 = round(df500["d' (mittel, schräg) [m]"].std(), 4)
 
     praeanalyse = round(np.sqrt(d_komp**2 + z_komp**2 + i_komp**2 + s_komp**2) / np.sqrt(2), 2)
     praeanalyse_komp = [d_komp, z_komp, k_komp, i_komp, s_komp]
 
-    infos = [pktNr_A, pktNr_B, float(delta_h_aprox), float(mean_delta_h), float(std_delta_h), 
-             float(mean_k), float(std_k), float(meand_sd), float(std_sd), 
-             float(praeanalyse), praeanalyse_komp]
+    ## Letzte kontrolle des df
+    visur = f"Visur_{start100}-{end100}"
+
+    df300["ID Visur"] = visur
+
+    df300 = df300.loc[:, ["ID Visur",
+                          "ID Messung",
+                          "Lage", 
+                          "d' (schräg) A-->B [m]", 
+                          "d' (schräg) B-->A [m]", 
+                          "d' (mittel, schräg) [m]", 
+                          "V-Winkel A-->B [gon]", 
+                          "V-Winkel B-->A [gon]",
+                          "Höhendiff. [m]",
+                          "Refraktionskoeff. k"]]
+
+    ## Ausgabe
+    infos_vis = [pktNr_A, 
+                 pktNr_B,
+                 float(praeanalyse), 
+                 praeanalyse_komp]
+                 
+    infos_height = [float(delta_h_aprox),
+                   float(mean_delta_h), 
+                   float(std_delta_h), 
+                   float(mean_delta_h_lage1),
+                   float(std_delta_h_lage1),
+                   float(mean_delta_h_lage2),
+                   float(std_delta_h_lage2)]
+
+    infos_k = [float(mean_k), 
+               float(std_k),
+               float(mean_k_lage1),
+               float(std_k_lage1),
+               float(mean_k_lage2),
+               float(std_k_lage2)]
+
+    infos_sd = [float(mean_sd), 
+                float(std_sd),
+                float(mean_sd_lage1),
+                float(std_sd_lage1),
+                float(mean_sd_lage2),
+                float(std_sd_lage2)]
+
 
     ## <----------------------------------------------------------------------------------->
 
-    return df300, infos
+    return df300, infos_vis, infos_height, infos_k, infos_sd
 
 ## << ----------------------------------------------------------------------------------- >>
 ## << ----------------------------------------------------------------------------------- >>

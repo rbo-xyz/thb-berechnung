@@ -1,6 +1,6 @@
 from utils.imports import import_csv, import_fix
 from utils.calculate import master_thb
-from utils.exports import export_protocol
+from utils.exports import export_protocol, export2csv, export_protocol_md_pdf
 
 from pathlib import Path
 import pandas as pd
@@ -80,12 +80,12 @@ def auto_auswertung2025(index:int,
     df_aprox = import_fix(fix)
 
     ## Höhenberechnung
-    df300_new, infos = master_thb(df100, 
-                                  df200, 
-                                  df_aprox, 
-                                  signalhoehe_A, 
-                                  signalhoehe_B, 
-                                  offset_A, offset_B)
+    df300_new, infos_vis, infos_height, infos_k, infos_sd = master_thb(df100, 
+                                                                       df200, 
+                                                                       df_aprox, 
+                                                                       signalhoehe_A, 
+                                                                       signalhoehe_B, 
+                                                                       offset_A, offset_B)
     
     ## <----------------------------------------------------------------------------------->
 
@@ -93,5 +93,34 @@ def auto_auswertung2025(index:int,
     # print(df300_new)
 
     ## Export der Protokolldatei
-    export_protocol(df300_new, infos, visurnummer, path_protokoll, data)
+    export_protocol(df300_new,
+                    infos_vis, 
+                    infos_height, 
+                    infos_k, 
+                    infos_sd, 
+                    visurnummer, 
+                    path_protokoll, 
+                    data)
+    ## <----------------------------------------------------------------------------------->
+
+    ## Export der csv-Datei
+    export2csv(df300_new,
+               infos_vis, 
+               infos_height, 
+               infos_k, 
+               infos_sd, 
+               visurnummer, 
+               path_protokoll, 
+               data)
+    ## <----------------------------------------------------------------------------------->
+
+    ## Export der Protokolldatei als md und pdf
+    export_protocol_md_pdf(df300_new,
+                           infos_vis, 
+                           infos_height, 
+                           infos_k, 
+                           infos_sd, 
+                           visurnummer, 
+                           path_protokoll, 
+                           data)
     ## <----------------------------------------------------------------------------------->

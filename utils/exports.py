@@ -2,47 +2,57 @@ import tabulate as tl
 from datetime import datetime
 import os
 
-def export_protocol(df300_new, 
-                    info:list, 
+import markdown
+from weasyprint import HTML
+
+def export_protocol(df300_new,
+                    infos_vis:list, 
+                    infos_height:list, 
+                    infos_k:list, 
+                    infos_sd:list, 
                     visur:str, 
-                    file_path:str,
+                    file_path:str, 
                     data:list):
     """
-    Exportiert ein Trigonometrisches Höhenbestimmungsprotokoll in eine formatierte Textdatei.
+    Exportiert ein Trigonometrisches Höhenbestimmungsprotokoll als formatierte Textdatei.
 
-    Die Funktion erstellt ein Textprotokoll mit:
-    - Tabellenübersicht der Messergebnisse (mit tabulate formatiert)
-    - Header mit Visur-ID und Auswertungszeit
+    Die Funktion erstellt ein Protokoll mit:
+    - Tabellenübersicht der Messergebnisse (tabulate-formatiert)
+    - Header mit Visur-ID und Auswertungszeitpunkt
     - Footer mit Messparametern, Start- und Endpunkten, Höhendifferenz,
       mittlerer Schrägdistanz, Refraktionskoeffizient und Präanalyse-Komponenten
 
     Parameter:
-    -----------
+    ----------
     df300_new : pandas.DataFrame
-        DataFrame mit den berechneten Messwerten (Schrägdistanz, Höhendifferenz, Refraktionskoeffizient).
-    info : list
-        Liste mit Informationen über Start- und Endpunkte, Höhendifferenzen, Refraktionskoeffizienten
-        und Präanalyse-Komponenten. Erwartetes Format:
-        [pktNr_A, pktNr_B, delta_h_aprox, mean_delta_h, std_delta_h, mean_k, std_k, mean_sd, std_sd, genauigkeit_mm, präanalyse_komponenten]
+        DataFrame mit berechneten Messwerten (Schrägdistanz, Höhendifferenz, Refraktionskoeffizient).
+    infos_vis : list
+        Liste mit Informationen über Start-/Endpunkte und Präanalyse: 
+        [pktNr_A, pktNr_B, Genauigkeit Präanalyse, Präanalyse-Komponenten].
+    infos_height : list
+        Statistische Kennwerte der Höhendifferenz.
+    infos_k : list
+        Statistische Kennwerte der Refraktionskoeffizienten.
+    infos_sd : list
+        Statistische Kennwerte der mittleren Schrägdistanz.
     visur : str
-        ID der Messung, wird für die Benennung der Ausgabedatei verwendet.
+        ID der Messung; wird für die Benennung der Protokolldatei verwendet.
     file_path : str
-        Pfad zum Ordner, in dem die Protokolldatei gespeichert werden soll.
+        Pfad zum Verzeichnis, in dem das Protokoll gespeichert wird.
     data : list
-        Messparameterliste: [Signalhöhe Station A, Instrumentenoffset A, Signalhöhe Station B, Instrumentenoffset B]
+        Messparameter: [Signalhöhe A, Offset A, Signalhöhe B, Offset B].
 
     Rückgabe:
-    ----------
+    ---------
     None
-        Die Funktion schreibt das Protokoll als Textdatei in den angegebenen Ordner.
-        Bei Fehlern wird eine Fehlermeldung ausgegeben.
+        Das Protokoll wird als Textdatei gespeichert; es erfolgt keine Rückgabe.
     """
 
     try:
         current_time = datetime.now().strftime("%d.%m.%Y / %H:%M")
 
-        formatting = (".4f", ".4f", ".4f", ".4f",".4f", ".4f",  ".2f")
-        colalign = ["right", "center", "center", "center", "center", "center", "center"]
+        formatting = (".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ",.4f", ".4f", ".4f", ".2f")
+        colalign = ["right", "center", "center", "center", "center", "center", "center", "center", "center", "center"]
         tbl_str = tl.tabulate(df300_new, headers="keys", tablefmt="outline", floatfmt=formatting, colalign=colalign, showindex=True)
 
         header = ["Trigonometrische Höhenbestimmung - Protokoll der Auswertung",
@@ -55,20 +65,31 @@ def export_protocol(df300_new,
                   f" - Instrumentenoffset Station A: {data[1]} m",
                   f" - Signalhöhe Station B: {data[2]} m",
                   f" - Instrumentenoffset Station B: {data[3]} m",
+                  f" - Startpunkt (A): {infos_vis[0]} // Endpunkt (B): {infos_vis[1]}",
                   "<<---------------------------------------------------------------->>",
-                  f"Startpunkt (A): {info[0]} // Endpunkt (B): {info[1]}",
-                  f"Höhendifferenz berechnet aus Näherungskoordinaten: {info[2]} m",
-                  f"Mittlere Schrägdistanz inkl. 1σ: {info[7]:.4f} m ± {info[8]:.4f} m",
-                  f"Mittlere Höhendifferenz über Trig. Höhenbestimmung inkl. 1σ: {info[3]} m ± {info[4]} m",
-                  f"Mittlerer Refraktionskoeffizient k inkl. 1σ: {info[5]:.2f} ± {info[6]:.2f}",
+                  "Höhenstatistiken der Auswertung:",
+                  f"Höhendifferenz berechnet aus Näherungskoordinaten: {infos_height[0]} m",
+                  f"Mittlere Höhendifferenz über Trig. Höhenbestimmung inkl. 1σ: {infos_height[1]} m ± {infos_height[2]} m",
+                  f"Mittlere Höhendifferenz (Lage 1) inkl. 1σ: {infos_height[3]} m ± {infos_height[4]} m",
+                  f"Mittlere Höhendifferenz (Lage 2) inkl. 1σ: {infos_height[5]} m ± {infos_height[6]} m",
                   "<<---------------------------------------------------------------->>",
-                  f"Die Präanalyse ergibt eine Genauigkeit der Höhenbestimmung von ca. {info[9]:.2f} mm // {info[9]/1000:.4f} m ",
+                  "Schrägdistanzstatistik der Auswertung:",
+                  f"Mittlere Schrägdistanz inkl. 1σ: {infos_sd[0]} m ± {infos_sd[1]} m",
+                  f"Mittlere Schrägdistanz (Lage 1) inkl. 1σ: {infos_sd[2]} m ± {infos_sd[3]} m",
+                  f"Mittlere Schrägdistanz (Lage 2) inkl. 1σ: {infos_sd[4]} m ± {infos_sd[5]} m",
+                  "<<---------------------------------------------------------------->>",
+                  "Refraktionskoeffizientenstatistik der Auswertung:",
+                  f"Mittlerer Refraktionskoeffizient k inkl. 1σ: {infos_k[0]} ± {infos_k[1]}",
+                  f"Mittlerer Refraktionskoeffizient k (Lage 1) inkl. 1σ: {infos_k[2]} ± {infos_k[3]}",
+                  f"Mittlerer Refraktionskoeffizient k (Lage 2) inkl. 1σ: {infos_k[4]} ± {infos_k[5]}",
+                  "<<---------------------------------------------------------------->>",
+                  f"Die Präanalyse ergibt eine Genauigkeit der Höhenbestimmung von ca. {infos_vis[2]:.2f} mm // {infos_vis[2]/1000:.4f} m ",
                   "Die Komponenten der Präanalyse sind (in mm):",
-                  f" - Distanzkomponente: {info[10][0]:.2f} mm",
-                  f" - Zenitwinkelkomponente: {info[10][1]:.2f} mm",
-                  f" - Refraktionskomponente: {info[10][2]:.2f} mm (wird bei gegenseitig gleichzeitiger Messung vernachlässigt)",
-                  f" - Genauigkeit Instrumentenhöhe: {info[10][3]:.2f} mm",
-                  f" - Genauigkeit Signalhöhe: {info[10][4]:.2f} mm",]
+                  f" - Distanzkomponente: {infos_vis[3][0]:.2f} mm",
+                  f" - Zenitwinkelkomponente: {infos_vis[3][1]:.2f} mm",
+                  f" - Refraktionskomponente: {infos_vis[3][2]:.2f} mm (wird bei gegenseitig gleichzeitiger Messung vernachlässigt)",
+                  f" - Genauigkeit Instrumentenhöhe: {infos_vis[3][3]:.2f} mm",
+                  f" - Genauigkeit Signalhöhe: {infos_vis[3][4]:.2f} mm",]
 
 
         full_text = "\n".join(header) + "\n"  + tbl_str + "\n" + "\n".join(footer)
@@ -82,37 +103,45 @@ def export_protocol(df300_new,
         print(f"Fehler beim Exportieren der Protokolldatei: {e}")
 
 
-def export2csv(df300_new, 
-               info:list, 
+def export2csv(df300_new,
+               infos_vis:list, 
+               infos_height:list, 
+               infos_k:list, 
+               infos_sd:list, 
                visur:str, 
-               file_path:str,
+               file_path:str, 
                data:list):
     """
     Exportiert ein DataFrame zusammen mit einem einleitenden Header-Text als CSV-Datei.
 
-    Parameters
+    Die CSV-Datei enthält:
+    - Header-Zeile mit Visur-ID und Auswertungsdatum/-zeit
+    - Messergebnisse aus df300_new ohne Indexspalte, Semikolon-getrennt
+    - Bestehende Dateien mit gleichem Namen werden überschrieben
+
+    Parameter:
     ----------
     df300_new : pandas.DataFrame
-        Das zu exportierende DataFrame mit den Messergebnissen.
-    info : list
-        Liste mit zusätzlichen Informationen zur Auswertung (z. B. Start-/Endpunkt, Mittelwerte, Standardabweichungen).
+        DataFrame mit den Messergebnissen.
+    infos_vis : list
+        Liste mit zusätzlichen Informationen zur Auswertung.
+    infos_height : list
+        Statistische Kennwerte der Höhendifferenz.
+    infos_k : list
+        Statistische Kennwerte der Refraktionskoeffizienten.
+    infos_sd : list
+        Statistische Kennwerte der mittleren Schrägdistanz.
     visur : str
-        Identifikationsstring der Visur, wird auch für die Dateibenennung verwendet.
+        Identifikationsstring der Visur; wird auch für die Dateibenennung verwendet.
     file_path : str
-        Pfad zum Verzeichnis, in dem die CSV-Datei gespeichert werden soll.
+        Pfad zum Verzeichnis, in dem die CSV-Datei gespeichert wird.
     data : list
-        Liste mit Messparametern (z. B. Signal- und Instrumentenhöhen), die im Header berücksichtigt werden können.
+        Messparameter: [Signalhöhe A, Offset A, Signalhöhe B, Offset B].
 
-    Returns
-    -------
+    Rückgabe:
+    ---------
     None
-        Die Funktion speichert die CSV-Datei auf der Festplatte. Es wird kein Wert zurückgegeben.
-
-    Notes
-    -----
-    - Die CSV-Datei enthält in der ersten Zeile einen Header-Text mit Visur-ID und aktuellem Datum/Zeit.
-    - Das DataFrame wird danach angehängt, ohne Indexspalte, mit Semikolon als Trennzeichen.
-    - Bestehende Dateien mit gleichem Namen werden überschrieben.
+        Die CSV-Datei wird auf der Festplatte gespeichert; es erfolgt keine Rückgabe.
     """
 
     try:
@@ -129,3 +158,162 @@ def export2csv(df300_new,
 
     except Exception as e:
         print(f"Fehler beim Exportieren der CSV-Datei: {e}")
+
+
+def export_protocol_md_pdf(df300_new,
+                           infos_vis:list, 
+                           infos_height:list, 
+                           infos_k:list, 
+                           infos_sd:list, 
+                           visur:str, 
+                           file_path:str, 
+                           data:list):
+    """
+    Exportiert ein Trigonometrisches Höhenbestimmungsprotokoll als Markdown- und PDF-Datei.
+
+    Funktionen:
+    - Markdown-Formatierung mit Tabellenübersicht der Messergebnisse
+    - Header mit Visur-ID und Auswertungszeit
+    - Footer mit Messparametern, statistischen Kennwerten und Präanalyse-Komponenten
+    - PDF-Erstellung über WeasyPrint (Markdown -> HTML -> PDF)
+    - PDF im Querformat (A4), saubere Schriftart (Arial) und Zeilenabstand
+
+    Parameter:
+    ----------
+    df300_new : pandas.DataFrame
+        DataFrame mit den berechneten Messwerten.
+    infos_vis : list
+        Liste mit Informationen über Start-/Endpunkte und Präanalyse: 
+        [pktNr_A, pktNr_B, Genauigkeit Präanalyse, Präanalyse-Komponenten].
+    infos_height : list
+        Statistische Kennwerte der Höhendifferenz.
+    infos_k : list
+        Statistische Kennwerte der Refraktionskoeffizienten.
+    infos_sd : list
+        Statistische Kennwerte der mittleren Schrägdistanz.
+    visur : str
+        ID der Messung; wird für die Benennung der Dateien verwendet.
+    file_path : str
+        Pfad zum Verzeichnis, in dem Markdown- und PDF-Dateien gespeichert werden.
+    data : list
+        Messparameter: [Signalhöhe A, Offset A, Signalhöhe B, Offset B].
+
+    Rückgabe:
+    ---------
+    None
+        Das Protokoll wird als Markdown- und PDF-Datei gespeichert; es erfolgt keine Rückgabe.
+    """
+
+    try:
+        current_time = datetime.now().strftime("%d.%m.%Y / %H:%M")
+
+
+        # Markdown-kompatible Tabelle
+        tbl_str = tl.tabulate(
+            df300_new,
+            headers="keys",
+            tablefmt="github",
+            showindex=True,
+            floatfmt=(".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".2f")
+        )
+
+        header = [
+            f"# Trigonometrische Höhenbestimmung - Protokoll der Auswertung",
+            f"**Visur ID:** {visur}  ",
+            f"**Ausgewertet am:** {current_time}",
+            "---"
+        ]
+
+        footer = [
+            "---",
+            "## Angegebene Parameter der Messung",
+            f"- Signalhöhe Station A: {data[0]} m",
+            f"- Instrumentenoffset Station A: {data[1]} m",
+            f"- Signalhöhe Station B: {data[2]} m",
+            f"- Instrumentenoffset Station B: {data[3]} m",
+            f"- Startpunkt (A): {infos_vis[0]} // Endpunkt (B): {infos_vis[1]}",
+            "---",
+            "## Höhenstatistiken",
+            f"- Höhendifferenz (Näherungskoordinaten): {infos_height[0]} m",
+            f"- Mittlere Höhendifferenz inkl. 1σ: {infos_height[1]} m ± {infos_height[2]} m",
+            f"- Mittlere Höhendifferenz (Lage 1) inkl. 1σ: {infos_height[3]} m ± {infos_height[4]} m",
+            f"- Mittlere Höhendifferenz (Lage 2) inkl. 1σ: {infos_height[5]} m ± {infos_height[6]} m",
+            "---",
+            "## Schrägdistanzstatistik",
+            f"- Mittlere Schrägdistanz inkl. 1σ: {infos_sd[0]} m ± {infos_sd[1]} m",
+            f"- Mittlere Schrägdistanz (Lage 1) inkl. 1σ: {infos_sd[2]} m ± {infos_sd[3]} m",
+            f"- Mittlere Schrägdistanz (Lage 2) inkl. 1σ: {infos_sd[4]} m ± {infos_sd[5]} m",
+            "---",
+            "## Refraktionskoeffizienten",
+            f"- Mittlerer Refraktionskoeffizient inkl. 1σ: {infos_k[0]} ± {infos_k[1]}",
+            f"- Mittlerer Refraktionskoeffizient (Lage 1) inkl. 1σ: {infos_k[2]} ± {infos_k[3]}",
+            f"- Mittlerer Refraktionskoeffizient (Lage 2) inkl. 1σ: {infos_k[4]} ± {infos_k[5]}",
+            "---",
+            "## Präanalyse",
+            f"- Genauigkeit Höhenbestimmung (1σ): {infos_vis[2]:.2f} mm // {infos_vis[2]/1000:.4f} m ",
+            "- Komponenten 1σ (in mm):",
+            f"  - Distanzkomponente: {infos_vis[3][0]:.2f} mm",
+            f"  - Zenitwinkelkomponente: {infos_vis[3][1]:.2f} mm",
+            f"  - Refraktionskomponente: {infos_vis[3][2]:.2f} mm (bei gleichzeitiger Messung vernachlässigt)",
+            f"  - Genauigkeit Instrumentenhöhe: {infos_vis[3][3]:.2f} mm",
+            f"  - Genauigkeit Signalhöhe: {infos_vis[3][4]:.2f} mm"
+        ]
+
+        # Markdown zusammenbauen
+        full_md = "\n".join(header) + "\n\n" + tbl_str + "\n\n" + "\n".join(footer)
+
+        # Pfade für Markdown und PDF
+        md_path = os.path.join(file_path, visur + "_Protokoll.md")
+        pdf_path = os.path.join(file_path, visur + "_Protokoll.pdf")
+
+        # Markdown speichern
+        with open(md_path, "w", encoding="utf-8") as f:
+            f.write(full_md)
+
+        # HTML für WeasyPrint mit Querformat und dynamischen Spalten
+        html_text = f"""
+        <html>
+        <head>
+        <style>
+        @page {{
+            size: A4 landscape;
+            margin: 20mm;
+            @bottom-left {{
+                content: "{visur}_Protokoll.md";
+                font-size: 8pt;
+            }}
+            @bottom-right {{
+                content: "Seite " counter(page) " / " counter(pages);
+                font-size: 8pt;
+            }}
+        }}
+        body {{
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+        }}
+        table {{
+            border-collapse: collapse;
+            font-size: 8pt; 
+        }}
+        th, td {{
+            padding: 4px 6px;
+            border: 1px solid #333;
+            text-align: center;
+        }}
+        th {{
+            background-color: #f2f2f2;
+        }}
+        </style>
+        </head>
+        <body>
+        {markdown.markdown(full_md, extensions=['tables'])}
+        </body>
+        </html>
+        """
+
+        # PDF erzeugen
+        HTML(string=html_text).write_pdf(pdf_path)
+
+    except Exception as e:
+        print(f"Fehler beim Exportieren der Protokolldatei: {e}")

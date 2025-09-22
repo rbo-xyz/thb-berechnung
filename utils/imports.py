@@ -54,7 +54,7 @@ def import_csv(file_path:str):
         df = df.drop(df[df["Punktklasse"] == "REF"].index)
 
         ## Vorbereitung für die Distanzkorrektur
-        df = df.astype({"PunktNr": str, "Lage": int, "Datum": str, "Uhrzeit": str, "Hz-Winkel": float, 
+        df = df.astype({"PunktNr": str, "Lage": str, "Datum": str, "Uhrzeit": str, "Hz-Winkel": float, 
                         "V-Winkel": float, "Schrägdistanz": float, "Atmos PPM": float})
         df = df.rename(columns={"Schrägdistanz" : "Ds-unkorr", "Atmos PPM" : "PPM-Atmos"})
 

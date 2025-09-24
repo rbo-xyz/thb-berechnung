@@ -49,6 +49,7 @@ def boxplot(df300,infos_height, visur:str):
     ax = verb_df.boxplot(column="Verbesserung [m]",grid=False, figsize=(6,4))
     ax.set_title(f"Abweichungen vom Mittelwert - {visur}")
     ax.set_ylabel("Δ Höhe [m]")
+    ax.set_ylim(-0.05, 0.05)
 
     # Ausreißer identifizieren und plotten (rot)
     q1 = verb_df["Verbesserung [m]"].quantile(0.25)

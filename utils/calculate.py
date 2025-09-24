@@ -161,8 +161,8 @@ def master_thb(df100,
 
     ### Korrektur der Kippachse
     ## <----------------------------------------------------------------------------------->
-    df100["Ds_Korrigiert"] , df100["V-Winkel_Korrigiert"] = korr_kippachse(df100["Ds"].values, offset_A, df100["V-Winkel_korr"].values)
-    df200["Ds_Korrigiert"] , df200["V-Winkel_Korrigiert"] = korr_kippachse(df200["Ds"].values, offset_B, df200["V-Winkel_korr"].values)
+    df100["Ds_Korrigiert"] , df100["V-Winkel_Korrigiert"] = korr_kippachse(df100["Ds"].values, offset_B, df100["V-Winkel_korr"].values)
+    df200["Ds_Korrigiert"] , df200["V-Winkel_Korrigiert"] = korr_kippachse(df200["Ds"].values, offset_A, df200["V-Winkel_korr"].values)
 
     col2drop = ["Datum", "Uhrzeit", "Standpkt", "Zielpkt", 
                 "V-Winkel", "V-Winkel_korr", "Ds", "Hz-Winkel"]
@@ -392,8 +392,8 @@ def korr_lotabw(xi: float, eta: float, azi: float, v_angle: float):
     azi = gon2rad(azi)
 
     # xi und eta umrechnen von cc (1cc = 0.1mgon) in rad
-    xi = (xi / 10000) /200 * np.pi
-    eta = (eta / 10000) /200 * np.pi
+    xi = (xi / 10_000) /200 * np.pi
+    eta = (eta / 10_000) /200 * np.pi
 
     # Berechnung der Lotabweichung in laengsrichtung aus xi und eta
     theta_v = xi * np.cos(azi) + eta * np.sin(azi)

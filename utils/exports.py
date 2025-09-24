@@ -51,7 +51,7 @@ def export_protocol(df300_new,
     try:
         current_time = datetime.now().strftime("%d.%m.%Y / %H:%M")
 
-        formatting = (".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ",.4f", ".4f", ".4f", ".2f")
+        formatting = (".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ",.4f", ".4f", ".4f", ".4f", ".2f")
         colalign = ["right", "center", "center", "center", "center", "center", "center", "center", "center", "center"]
         tbl_str = tl.tabulate(df300_new, headers="keys", tablefmt="outline", floatfmt=formatting, colalign=colalign, showindex=True)
 
@@ -61,10 +61,14 @@ def export_protocol(df300_new,
 
         footer = ["\n<<---------------------------------------------------------------->>",
                   "Angegebene Parameter der Messung:",
+                  f" - Instrumentenhöhe Station A: {data[0] - data[1]} m",
+                  f" - Offset Station A: {data[1]} m",
                   f" - Signalhöhe Station A: {data[0]} m",
-                  f" - Instrumentenoffset Station A: {data[1]} m",
-                  f" - Signalhöhe Station B: {data[2]} m",
+                  "",
+                  f" - Instrumentenhöhe Station B: {data[2] - data[3]} m",               
                   f" - Instrumentenoffset Station B: {data[3]} m",
+                  f" - Signalhöhe Station B: {data[2]} m",
+                  "",
                   f" - Startpunkt (A): {infos_vis[0]} // Endpunkt (B): {infos_vis[1]}",
                   "<<---------------------------------------------------------------->>",
                   "Höhenstatistiken der Auswertung:",
@@ -214,7 +218,7 @@ def export_protocol_md_pdf(df300_new,
             headers="keys",
             tablefmt="github",
             showindex=True,
-            floatfmt=(".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".2f")
+            floatfmt=(".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".4f", ".2f")
         )
 
         header = [
@@ -227,11 +231,13 @@ def export_protocol_md_pdf(df300_new,
         footer = [
             "---",
             "## Angegebene Parameter der Messung",
-            f"- Signalhöhe Station A: {data[0]} m",
-            f"- Instrumentenoffset Station A: {data[1]} m",
-            f"- Signalhöhe Station B: {data[2]} m",
-            f"- Instrumentenoffset Station B: {data[3]} m",
-            f"- Startpunkt (A): {infos_vis[0]} // Endpunkt (B): {infos_vis[1]}",
+            f" - Instrumentenhöhe Station A: {data[0] - data[1]} m",
+            f" - Offset Station A: {data[1]} m",
+            f" - Signalhöhe Station A: {data[0]} m",
+            f" - Instrumentenhöhe Station B: {data[2] - data[3]} m",               
+            f" - Instrumentenoffset Station B: {data[3]} m",
+            f" - Signalhöhe Station B: {data[2]} m",
+            f" - Startpunkt (A): {infos_vis[0]} // Endpunkt (B): {infos_vis[1]}",
             "---",
             "## Höhenstatistiken",
             f"- Höhendifferenz (Näherungskoordinaten): {infos_height[0]} m",
@@ -250,13 +256,13 @@ def export_protocol_md_pdf(df300_new,
             f"- Mittlerer Refraktionskoeffizient (Lage 2) inkl. 1σ: {infos_k[4]} ± {infos_k[5]}",
             "---",
             "## Präanalyse",
-            f"- Genauigkeit Höhenbestimmung (1σ): {infos_vis[2]:.2f} mm // {infos_vis[2]/1000:.4f} m ",
-            "- Komponenten 1σ (in mm):",
-            f"  - Distanzkomponente: {infos_vis[3][0]:.2f} mm",
-            f"  - Zenitwinkelkomponente: {infos_vis[3][1]:.2f} mm",
-            f"  - Refraktionskomponente: {infos_vis[3][2]:.2f} mm (bei gleichzeitiger Messung vernachlässigt)",
-            f"  - Genauigkeit Instrumentenhöhe: {infos_vis[3][3]:.2f} mm",
-            f"  - Genauigkeit Signalhöhe: {infos_vis[3][4]:.2f} mm"
+            f"#### Genauigkeit der Höhenbestimmung (1σ): {infos_vis[2]:.2f} mm // {infos_vis[2]/1000:.4f} m ",
+            "#### Die Komponenten der Präanalyse in 1σ (in mm):",
+            f"- Distanzkomponente: {infos_vis[3][0]:.2f} mm",
+            f"- Zenitwinkelkomponente: {infos_vis[3][1]:.2f} mm",
+            f"- Refraktionskomponente: {infos_vis[3][2]:.2f} mm (bei gleichzeitiger Messung vernachlässigt)",
+            f"- Genauigkeit Instrumentenhöhe: {infos_vis[3][3]:.2f} mm",
+            f"- Genauigkeit Signalhöhe: {infos_vis[3][4]:.2f} mm"
         ]
 
         # Markdown zusammenbauen

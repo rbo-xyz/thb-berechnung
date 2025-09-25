@@ -79,7 +79,7 @@ def boxplot(df300,infos_height, visur:str):
 
 ## <<----------------------------------------------------------------------------------------------------------->>
 
-def boxplot_beaut(df300, infos_height, visur: str):
+def boxplot_beaut(df300, visur: str):
     """
     Erstellt einen ansprechenden Boxplot der Differenzen der Höhendaten zum Mittelwert in Zentimetern.
 
@@ -110,7 +110,9 @@ def boxplot_beaut(df300, infos_height, visur: str):
     
     ## <<------------------------------------------------------------------------->>
     ## Verbesserung = Differenz jeder Messung zum Mittelwert
-    mittelw = infos_height[1]
+    # mittelw = infos_height[1]
+    mittelw = df300["Höhendiff. [m]"].mean()
+
     verbesserung = (df300["Höhendiff. [m]"] - mittelw) * 100
     verb_df = pd.DataFrame({"Verbesserung [cm]": verbesserung})
 
@@ -141,7 +143,7 @@ def boxplot_beaut(df300, infos_height, visur: str):
     ax.set_ylabel("Δ Höhe [cm]", fontsize=12)
     ax.set_xticks([1])
     ax.set_xticklabels([f"{visur}"], fontsize=12)
-    ax.set_ylim(-5, 5)
+    ax.set_ylim(-10, 10)
 
     ax.yaxis.set_major_locator(plt.MultipleLocator(1))
     ax.grid(axis="y", linestyle="--", alpha=0.5)
@@ -240,12 +242,13 @@ def boxplot_beaut(df300, infos_height, visur: str):
 
     # Layout anpassen
     fig.tight_layout()
+    plt.close(fig)
 
     return ax
 
 ## <<----------------------------------------------------------------------------------------------------------->>
 
-def scatterplot_vwinkel(df, visur:str, max_streuung:float=0.003):
+def scatterplot_vwinkel(df, visur:str, max_streuung:float=0.004):
     """
     Erstellt einen Scatterplot der Vertikalwinkel (V-Winkel) von A nach B und B nach A zentriert um deren Mittelwerte.
 
@@ -262,7 +265,7 @@ def scatterplot_vwinkel(df, visur:str, max_streuung:float=0.003):
         DataFrame mit den Messdaten, der die Spalten "V-Winkel A-->B [gon]", "V-Winkel B-->A [gon]" und "Lage" enthalten muss.
     visur : str
         Beschreibung oder Bezeichnung, die im Plottitel genutzt werden kann.
-    max_streuung : float, optional (Standard: 0.003)
+    max_streuung : float, optional (Standard: 0.004)
         Maximale Streuung (plus/minus) um den Mittelwert für die Skalierung der y-Achsen in Gon.
 
     Rückgabe:
@@ -370,10 +373,11 @@ def scatterplot_vwinkel(df, visur:str, max_streuung:float=0.003):
     ## Setze des Titels
 
     plt.suptitle(f"Winkel zentriert um den jeweiligen Mittelwert. \nPro Rastereinheit entsteht ein Abstand vom 0.1 mgon (Streuung: ±{max_streuung*100} mgon)", fontsize=12, y=-0.01)
-    plt.title("Streuung der Vertikalwinkel", fontsize=16, pad=16)
+    plt.title(f"Streuung der Vertikalwinkel -- {visur}", fontsize=16, pad=16)
     # ax1.set_title(f"Streuung der Vertikalwinkel\n--- zentriert um den jeweiligen Mittelwert ---\nEinheit pro Raster: 0.1 mgon (Max: ±{max_streuung*100} mgon) ---\nVisurnummer {visurnummer}", fontsize=15, pad=16)
     # ax1.set_title("hallo")
 
     fig.tight_layout()
+    plt.close(fig)
     
     return ax1

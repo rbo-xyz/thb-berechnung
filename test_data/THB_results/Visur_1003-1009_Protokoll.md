@@ -1,6 +1,6 @@
 # Trigonometrische Höhenbestimmung - Protokoll der Auswertung
 **Visur ID:** Visur_1003-1009  
-**Ausgewertet am:** 24.09.2025 / 23:46
+**Ausgewertet am:** 25.09.2025 / 14:32
 ---
 
 |    | ID Visur        | ID Messung   |   Lage |   d' (schräg) A-->B [m] |   d' (schräg) B-->A [m] |   d' (mittel, schräg) [m] |   V-Winkel A-->B [gon] |   V-Winkel B-->A [gon] |   Höhendiff. [m] |   Refraktionskoeff. k |

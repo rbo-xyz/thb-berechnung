@@ -2,8 +2,14 @@ import tabulate as tl
 from datetime import datetime
 import os
 
+from pathlib import Path
 import markdown
 from weasyprint import HTML
+
+from utils.plots import boxplot_beaut, scatterplot_vwinkel
+
+def path_to_file_url(path):
+    return "file:///" + str(path.resolve()).replace("\\", "/")
 
 def export_protocol(df300_new,
                     infos_vis:list, 
@@ -272,6 +278,31 @@ def export_protocol_md_pdf(df300_new,
         md_path = os.path.join(file_path, visur + "_Protokoll.md")
         pdf_path = os.path.join(file_path, visur + "_Protokoll.pdf")
 
+        ## Bilder für Protokoll erstellen
+        boxplot_path = Path(os.path.join(file_path, visur + "_Boxplot_Höhendifferenz.png"))
+        scatterplot_path = Path(os.path.join(file_path, visur + "_Scatterplot_Verteilung_Winkel.png"))
+
+        ax1 = boxplot_beaut(df300_new, visur)
+        ax1.figure.savefig(boxplot_path, bbox_inches='tight', dpi=300)
+
+        ax2 = scatterplot_vwinkel(df300_new, visur)
+        ax2.figure.savefig(scatterplot_path, bbox_inches='tight', dpi=300)
+
+        ## Bilder im HTML-String hinzufügen
+        img_html = f"""
+        <div style='margin-top:30px;'>
+          <h2 style='text-align:center;'>Visualisierung der Messergebnisse</h2>
+          <div style='display: flex; justify-content: space-between; align-items: flex-start;'>
+            <div style='width:48%; text-align: center;'>
+              <img src="{path_to_file_url(boxplot_path)}" style="max-width:100%; max-height:550px; object-fit: contain;" />
+            </div>
+            <div style='width:48%; text-align: center;'>
+              <img src="{path_to_file_url(scatterplot_path)}" style="max-width:100%; max-height:550px; object-fit: contain;" />
+            </div>
+          </div>
+        </div>
+        """
+
         # Markdown speichern
         with open(md_path, "w", encoding="utf-8") as f:
             f.write(full_md)
@@ -314,6 +345,7 @@ def export_protocol_md_pdf(df300_new,
         </head>
         <body>
         {markdown.markdown(full_md, extensions=['tables'])}
+        {img_html}
         </body>
         </html>
         """

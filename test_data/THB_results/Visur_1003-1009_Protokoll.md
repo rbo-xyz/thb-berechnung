@@ -1,6 +1,6 @@
 # Trigonometrische Höhenbestimmung - Protokoll der Auswertung
 **Visur ID:** Visur_1003-1009  
-**Ausgewertet am:** 25.09.2025 / 14:32
+**Ausgewertet am:** 01.10.2025 / 12:52
 ---
 
 |    | ID Visur        | ID Messung   |   Lage |   d' (schräg) A-->B [m] |   d' (schräg) B-->A [m] |   d' (mittel, schräg) [m] |   V-Winkel A-->B [gon] |   V-Winkel B-->A [gon] |   Höhendiff. [m] |   Refraktionskoeff. k |
@@ -36,19 +36,23 @@
 ---
 ## Höhenstatistiken
 - Höhendifferenz (Näherungskoordinaten): 187.47 m
-- Mittlere Höhendifferenz inkl. 1σ: 187.3545 m ± 0.0177 m
-- Mittlere Höhendifferenz (Lage 1) inkl. 1σ: 187.3669 m ± 0.0142 m
-- Mittlere Höhendifferenz (Lage 2) inkl. 1σ: 187.3421 m ± 0.0108 m
+- Empirische Std. (Freiheitsgrad n-1) einer einzelnen Höhendifferenz 1σ: 0.0177 m
+- Mittlere Höhendifferenz über Trig. Höhenbestimmung inkl. 1σ mittlere Std.: 187.3545 m ± 0.0042 m
+- Mittlere Höhendifferenz (Lage 1) inkl. 1σ mittlere Std.: 187.3669 m ± 0.0033 m
+- Mittlere Höhendifferenz (Lage 2) inkl. 1σ mittlere Std.: 187.3421 m ± 0.0025 m
 ---
 ## Schrägdistanzstatistik
-- Mittlere Schrägdistanz inkl. 1σ: 2494.3336 m ± 0.0009 m
-- Mittlere Schrägdistanz (Lage 1) inkl. 1σ: 2494.3342 m ± 0.0007 m
-- Mittlere Schrägdistanz (Lage 2) inkl. 1σ: 2494.333 m ± 0.0007 m
+- Empirische Std. (Freiheitsgrad n-1) einer einzelnen Schrägdistanz 1σ: 0.0009 m
+- Mittlere Schrägdistanz inkl. 1σ mittlere Std.: 2494.3336 m ± 0.0002 m
+- Mittlere Schrägdistanz (Lage 1) inkl. 1σ mittlere Std.: 2494.3342 m ± 0.0002 m
+- Mittlere Schrägdistanz (Lage 2) inkl. 1σ mittlere Std.: 2494.333 m ± 0.0002 m
 ---
+<div style="page-break-before: always;"></div>
 ## Refraktionskoeffizienten
-- Mittlerer Refraktionskoeffizient inkl. 1σ: 0.1 ± 0.05
-- Mittlerer Refraktionskoeffizient (Lage 1) inkl. 1σ: 0.06 ± 0.04
-- Mittlerer Refraktionskoeffizient (Lage 2) inkl. 1σ: 0.14 ± 0.02
+- Empirische Std. (Freiheitsgrad n-1) eines einzelnen Refraktionskoeffizienten 1σ: 0.05
+- Mittlerer Refraktionskoeffizient k inkl. 1σ mittlere Std.: 0.1 ± 0.0118
+- Mittlerer Refraktionskoeffizient k (Lage 1) inkl. 1σ mittlere Std.: 0.06 ± 0.0094
+- Mittlerer Refraktionskoeffizient k (Lage 2) inkl. 1σ mittlere Std.: 0.14 ± 0.0047
 ---
 ## Präanalyse
 #### Genauigkeit der Höhenbestimmung (1σ): 4.27 mm // 0.0043 m 

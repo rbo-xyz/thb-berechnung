@@ -1,0 +1,11 @@
+# JAG3D Import File - DS Messungen
+# Gruppe: DS_CU15
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+CU15	CU16	1.626	1.5060	131.16181	
+CU15	CU124	1.626	1.6690	56.78501	
+CU15	CU16	1.626	1.5060	131.16166	
+CU15	CU124	1.626	1.6690	56.78511	
+CU15	CU16	1.626	1.5060	131.16166	
+CU15	CU124	1.626	1.6690	56.78496	

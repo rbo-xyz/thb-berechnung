@@ -1,0 +1,14 @@
+# JAG3D Import File - RI Messungen
+# Gruppe: 1009_1
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+1009	1011			0.0	
+1009	8001			42.57067	
+1009	8003			149.0092	
+1009	1011			0.0	
+1009	8001			42.57018	
+1009	8003			149.00854	
+1009	1011			0.0	
+1009	8001			42.57144	
+1009	8003			149.00846	

@@ -17,7 +17,7 @@ for folder in sorted([f for f in base_path.iterdir() if f.is_dir()]):
     parent_folders.append(folder.name) 
     folder_paths.append(str(folder))         
 
-with open("all-data_csv/gugus.txt", "w") as f:
+with open("kombination_allTHB-csv/gugus.txt", "w") as f:
     f.write(str(csv_file))
 
 dfs = []

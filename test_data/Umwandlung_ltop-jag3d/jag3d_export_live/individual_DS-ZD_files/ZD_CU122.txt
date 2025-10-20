@@ -1,0 +1,14 @@
+# JAG3D Import File - ZD Messungen
+# Gruppe: ZD_CU122
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+CU122	CU121	1.73	1.8020	99.90637	
+CU122	CU123	1.73	1.7030	99.85461	
+CU122	NP42	1.73	1.7550	99.60968	
+CU122	CU121	1.73	1.8020	99.90633	
+CU122	CU123	1.73	1.7030	99.85479	
+CU122	NP42	1.73	1.7550	99.60954	
+CU122	CU121	1.73	1.8020	99.90632	
+CU122	CU123	1.73	1.7030	99.855	
+CU122	NP42	1.73	1.7550	99.60937	

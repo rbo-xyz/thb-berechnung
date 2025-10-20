@@ -1,0 +1,11 @@
+# JAG3D Import File - DS Messungen
+# Gruppe: DS_NP42
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+NP42	CU122	1.755	1.7300	33.95863	
+NP42	CU124	1.755	1.6690	79.03255	
+NP42	CU122	1.755	1.7300	33.95868	
+NP42	CU124	1.755	1.6690	79.0326	
+NP42	CU122	1.755	1.7300	33.95868	
+NP42	CU124	1.755	1.6690	79.03265	

@@ -1,0 +1,14 @@
+# JAG3D Import File - RI Messungen
+# Gruppe: CU16_18
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+CU16	NP41			0.0	
+CU16	CU121			2.04782	
+CU16	CU15			64.23766	
+CU16	NP41			0.0	
+CU16	CU121			2.04798	
+CU16	CU15			64.23704	
+CU16	NP41			0.0	
+CU16	CU121			2.04811	
+CU16	CU15			64.23678	

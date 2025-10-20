@@ -1,0 +1,14 @@
+# JAG3D Import File - DS Messungen
+# Gruppe: DS_CU121
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+CU121	CU122	1.802	1.7300	57.96284	
+CU121	NP41	1.802	1.5650	37.70549	
+CU121	CU16	1.802	1.5060	146.95852	
+CU121	CU122	1.802	1.7300	57.96274	
+CU121	NP41	1.802	1.5650	37.70554	
+CU121	CU16	1.802	1.5060	146.95837	
+CU121	CU122	1.802	1.7300	57.96269	
+CU121	NP41	1.802	1.5650	37.70544	
+CU121	CU16	1.802	1.5060	146.95852	

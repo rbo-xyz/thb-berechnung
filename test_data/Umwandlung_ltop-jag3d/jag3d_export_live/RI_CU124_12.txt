@@ -1,0 +1,14 @@
+# JAG3D Import File - RI Messungen
+# Gruppe: CU124_12
+# Format: <start point> <end point> <instrument height> <reflector height> <observation value> <uncertainty>
+# Generiert aus LTOP mes-Datei
+
+CU124	CU13			0.0	
+CU124	CU15			201.29225	
+CU124	NP42			288.94672	
+CU124	CU13			0.0	
+CU124	CU15			201.29212	
+CU124	NP42			288.94643	
+CU124	CU13			0.0	
+CU124	CU15			201.29212	
+CU124	NP42			288.94631	
